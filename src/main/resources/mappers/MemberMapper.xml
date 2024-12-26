@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.pgm.boardsystem.mapper.MemberMapper">
+	<sql id="search">
+		<where>
+			<if test="word!=null and field =='id'">
+				id like CONCAT('%',#{word},'%')
+			</if>
+			<if test="word!=null and field =='name'">
+				name like CONCAT('%',#{word},'%')
+			</if>
+			<if test="word!=null and field =='addr'">
+				addr like CONCAT('%',#{word},'%')
+			</if>
+			<if test="word!=null and field =='regdate'">
+				regdate like CONCAT('%',#{word},'%')
+			</if>
+		</where>
+	</sql>
+	<select id="findAll"
+		resultType="com.pgm.boardsystem.domain.MemberVO">
+		select * from tbl_member
+		<include refid="search" />
+		limit #{pageStart},#{pageSize}
+	</select>
+
+	<select id="memberCount" resultType="int">
+		select count(*) from tbl_member
+		<include refid="search" />
+
+	</select>
+
+	<select id="getList"
+		resultType="com.pgm.boardsystem.domain.MemberVO">
+		select * from tbl_member
+	</select>
+	<select id="read" resultType="com.pgm.boardsystem.domain.MemberVO">
+		select * from tbl_member where
+		id=#{id}
+	</select>
+	<!-- 회원가입 -->
+	<insert id="join">
+		insert into tbl_member(id,name,pass,addr)
+		values(#{id},#{name},#{pass},#{addr})
+	</insert>
+	<!-- 아디중복체크 -->
+	<select id="idCheck" resultType="int">
+		select count(*) from tbl_member
+		where id=#{id}
+	</select>
+	<!-- 로그인처리 -->
+	<select id="loginCheck"
+		resultType="com.pgm.boardsystem.domain.MemberVO">
+		select * from tbl_member where id=#{id}
+	</select>
+
+	<update id="modify">
+		update tbl_member
+		set name=#{name},
+		pass=#{pass},
+		addr=#{addr},
+		regdate=now()
+		where id=#{id}
+	</update>
+
+	<delete id="delete">
+		delete from tbl_member where id=#{id}
+	</delete>
+
+</mapper>
